@@ -1,36 +1,29 @@
-import { BrowserRouter } from 'react-router-dom';
-import { ReactQueryDevtools } from 'react-query/devtools';
-import { QueryClient, QueryClientProvider } from 'react-query';
+import React from 'react'
+import ReactDOM from 'react-dom/client'
+import App from 'src/App'
+import './index.css'
+import { BrowserRouter } from 'react-router-dom'
+import 'src/i18n/i18n'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { AppProvider } from './contexts/app.context'
 
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-import App from './App';
-import './index.css';
-import { AppProvider } from './contexts/app.context';
-import ErrorBoundary from './components/shared/ErrorBoundary';
-
-// Create a client
 const queryClient = new QueryClient({
-    defaultOptions: {
-        queries: {
-            refetchOnWindowFocus: false,
-        },
-    },
-});
+  defaultOptions: {
+    queries: {
+      refetchOnWindowFocus: false,
+      retry: 0
+    }
+  }
+})
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
-    <React.StrictMode>
-        <BrowserRouter>
-            <QueryClientProvider client={queryClient}>
-                <AppProvider>
-                    <ErrorBoundary>
-                        <App />
-                    </ErrorBoundary>
-                </AppProvider>
-                {process.env.NODE_ENV === 'development' && (
-                    <ReactQueryDevtools initialIsOpen={false} />
-                )}
-            </QueryClientProvider>
-        </BrowserRouter>
-    </React.StrictMode>,
-);
+  <React.StrictMode>
+    <BrowserRouter>
+      <QueryClientProvider client={queryClient}>
+        <AppProvider>
+          <App />
+        </AppProvider>
+      </QueryClientProvider>
+    </BrowserRouter>
+  </React.StrictMode>
+)

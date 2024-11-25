@@ -1,42 +1,33 @@
-import { ToastContainer } from 'react-toastify';
-import { useRouteElements } from './routes';
-import { useEffect } from 'react';
-import { LocalStorageEventTarget } from './utils';
-import { useAppContext } from './contexts/app.context';
-
-import 'react-toastify/dist/ReactToastify.css';
+import useRouteElements from './useRouteElements'
+import { ToastContainer } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
+import { useEffect, useContext } from 'react'
+import { LocalStorageEventTarget } from './utils/auth'
+import { AppContext } from './contexts/app.context'
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
+import ErrorBoundary from './components/ErrorBoundary'
+import { HelmetProvider } from 'react-helmet-async'
 
 function App() {
-    const routeElements = useRouteElements();
-    const { reset } = useAppContext();
-    useEffect(() => {
-        LocalStorageEventTarget.addEventListener('clearLocalStorage', reset);
+  const routeElements = useRouteElements()
+  const { reset } = useContext(AppContext)
 
-        return () => {
-            LocalStorageEventTarget.removeEventListener(
-                'clearLocalStorage',
-                reset,
-            );
-        };
-    }, [reset]);
+  useEffect(() => {
+    LocalStorageEventTarget.addEventListener('clearLS', reset)
+    return () => {
+      LocalStorageEventTarget.removeEventListener('clearLS', reset)
+    }
+  }, [reset])
 
-    return (
-        <div>
-            <ToastContainer
-                position="top-right"
-                autoClose={5000}
-                hideProgressBar={false}
-                newestOnTop={false}
-                closeOnClick
-                rtl={false}
-                pauseOnFocusLoss
-                draggable
-                pauseOnHover
-                theme="light"
-            />
-            {routeElements}
-        </div>
-    );
+  return (
+    <HelmetProvider>
+      <ErrorBoundary>
+        {routeElements}
+        <ToastContainer />
+      </ErrorBoundary>
+      <ReactQueryDevtools initialIsOpen={false} />
+    </HelmetProvider>
+  )
 }
 
-export default App;
+export default App
